@@ -1,0 +1,75 @@
+{{ 'component-focal-banner.css' | asset_url | stylesheet_tag }}
+
+<section class="focal-banner" id="{{ section.id }}">
+  <div class="page-width">
+    <figure class="image-div">
+      {{ section.settings.primary_image | image_url: width: 1000 | image_tag }}
+      <ul class="focal-list">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'focal-point' %}
+              {% assign image = block.settings.image %}
+              {% assign product = block.settings.featured_product %}
+              <li
+                class="focal-point"
+                style="left:{{ image.presentation.focal_point.x }}%;top:{{ image.presentation.focal_point.y }}%;"
+              >
+                <button type="button"></button>
+                <div class="card">
+                  <h4>{{ product.title }}</h4>
+                  <p>{{ product.price | money_with_currency }}</p>
+                  <a href="{{ product.url }}">View Details</a>
+                </div>
+              </li>
+            {% else %}
+
+          {% endcase %}
+        {% endfor %}
+      </ul>
+    </figure>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Focal banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "primary_image",
+      "label": "Primary Image"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Focal Point",
+      "type": "focal-point",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Focal Point Image",
+          "info": "Please provide the same image as the one uploaded in 'Primary Image' with different file name"
+        },
+        {
+          "type": "product",
+          "id": "featured_product",
+          "label": "Featured Product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% javascript %}
+  let focalPoints = document.querySelectorAll('.focal-point');
+  focalPoints.forEach((el) => {
+    let btn = el.querySelector('button');
+    let card = el.querySelector('.card');
+    btn.addEventListener('click', (e) => {
+      card.classList.toggle('active');
+    });
+  });
+{% endjavascript %}
